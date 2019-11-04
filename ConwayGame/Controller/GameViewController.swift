@@ -12,71 +12,73 @@ import SceneKit
 
 class GameViewController: UIViewController {
     
-    var grid = [[CellNode]]()
+    let scene = GameScene()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // create a new scene
-        let scene = GameScene(tamanho: 8)
-        self.grid = scene.grid
-        
-        // retrieve the SCNView
+        setPlayButton()
+        setupScene()
+    }
+    
+    func setPlayButton() {
+        let geometry = SCNPyramid(width: 3, height: 3, length: 0.08)
+        let playButton = SCNNode(geometry: geometry)
+        playButton.name = "play"
+        playButton.position.x = 1
+        playButton.position.y = -8
+        playButton.rotation = SCNVector4Make(0, 0, -1, Float(Double.pi/2));
+        playButton.geometry?.firstMaterial?.diffuse.contents = UIColor.systemBlue
+        scene.rootNode.addChildNode(playButton)
+    }
+    
+//    func setClearButton() {
+//        let geometry = SCNCylinder(radius: 1, height: 1)
+//        let clearButton = SCNNode(geometry: geometry)
+//        clearButton.name = "clear"
+//        clearButton.position.x = 6
+//        clearButton.position.y = -8
+//        clearButton.rotation = SCNVector4Make(0, 0, -1, Float(Double.pi/2));
+//        clearButton.geometry?.firstMaterial?.diffuse.contents = UIColor.yellow
+//        scene.rootNode.addChildNode(clearButton)
+//    }
+    
+    func setupScene() {
         let scnView = self.view as! SCNView
         
-        // set the scene to the view
         scnView.scene = scene
+        scnView.pointOfView?.position = SCNVector3Make(2, 2, 30)
         
-        // allows the user to manipulate the camera
-        scnView.allowsCameraControl = true
-        
-        // show statistics such as fps and timing information
         scnView.showsStatistics = true
         
-        // configure the view
         scnView.backgroundColor = UIColor.black
         
-        // create and add a camera to the scene
-        let cameraNode = SCNNode()
-        cameraNode.camera = SCNCamera()
-        scene.rootNode.addChildNode(cameraNode)
-        
-        // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
-        
-        // create and add a light to the scene
         let lightNode = SCNNode()
         lightNode.light = SCNLight()
         lightNode.light!.type = .omni
         lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
         scene.rootNode.addChildNode(lightNode)
         
-        // add a tap gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
     }
     
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        // retrieve the SCNView
         let scnView = self.view as! SCNView
-        
-        // check what nodes are tapped
+
         let p = gestureRecognize.location(in: scnView)
         let hitResults = scnView.hitTest(p, options: [:])
-        // check that we clicked on at least one object
+
         if hitResults.count > 0 {
-            // retrieved the first clicked object
             let result = hitResults[0]
             
-            // get its material
+            //Animação do clique no node
             let material = result.node.geometry!.firstMaterial!
             
-            // highlight it
             SCNTransaction.begin()
             SCNTransaction.animationDuration = 0.5
             
-            // on completion - unhighlight
             SCNTransaction.completionBlock = {
                 SCNTransaction.begin()
                 SCNTransaction.animationDuration = 0.5
@@ -86,18 +88,18 @@ class GameViewController: UIViewController {
                 SCNTransaction.commit()
             }
             
-            // Verifica o clique do estado e seta vivo ou morto
-            let node = result.node as! CellNode
-            
-            if let estado = node.estado {
-                if estado == .morto {
-                    material.diffuse.contents = UIColor.red
-                    node.estado = .vivo
+            if result.node.name == "play" {
+                scene.rmNodes()
+                scene.nextGen()
+            } else {
+                // Verifica o clique do estado e seta vivo ou morto
+                let node = result.node as! CellNode
+                
+                if node.estado == 0 {
+                    node.estado = 1
                 } else {
-                    material.diffuse.contents = UIColor.white
-                    node.estado = .morto
+                    node.estado = 0
                 }
-                print("X: \(node.x) Y: \(node.y)")
             }
             
             SCNTransaction.commit()
