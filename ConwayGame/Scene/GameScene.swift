@@ -64,8 +64,10 @@ class GameScene: SCNScene {
             for y in 0...grid[0].count-1 {
                 if grid[x][y].estado == 1, first != 0{
                     if alternate {
+                        grid[x][y].geometry = SCNPyramid(width: 0.8, height: 0.8, length: 0.5)
                         grid[x][y].geometry?.firstMaterial?.diffuse.contents = UIColor.cyan
                     } else {
+                        grid[x][y].geometry = SCNCapsule(capRadius: 0.5, height: 0.8)
                         grid[x][y].geometry?.firstMaterial?.diffuse.contents = UIColor.systemPink
                     }
                     self.rootNode.addChildNode(grid[x][y])

@@ -34,7 +34,7 @@ class GameViewController: UIViewController {
         let lightNode = SCNNode()
         lightNode.light = SCNLight()
         lightNode.light!.type = .omni
-        lightNode.position = SCNVector3(x: 0, y: 100, z: 100)
+        lightNode.position = SCNVector3(x: 100, y: -20, z: 100)
         scene.rootNode.addChildNode(lightNode)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
