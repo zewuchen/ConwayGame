@@ -19,6 +19,8 @@ class GameScene: SCNScene {
     var centerCell = CellNode(estado: 0)
     var playButton: SCNNode?
     var controlPlayGeometry: Bool = true
+    var first = 0
+    var alternate: Bool = true
     
     override init() {
         super.init()
@@ -52,7 +54,7 @@ class GameScene: SCNScene {
     }
     
     func nextGen() {
-        rmNodes()
+//        rmNodes()
         self.grid = gridModel.nextGen()
         addNodes()
     }
@@ -60,13 +62,25 @@ class GameScene: SCNScene {
     func addNodes() {
         for x in 0...grid.count-1 {
             for y in 0...grid[0].count-1 {
-                self.rootNode.addChildNode(grid[x][y])
+                if grid[x][y].estado == 1, first != 0{
+                    if alternate {
+                        grid[x][y].geometry?.firstMaterial?.diffuse.contents = UIColor.cyan
+                    } else {
+                        grid[x][y].geometry?.firstMaterial?.diffuse.contents = UIColor.systemPink
+                    }
+                    self.rootNode.addChildNode(grid[x][y])
+                } else if first == 0{
+                    self.rootNode.addChildNode(grid[x][y])
+                }
                 
                 if x == half && y == half {
                     centerCell = grid[x][y]
                 }
             }
         }
+        
+        first = 1
+        alternate = !alternate
     }
     
     func rmNodes() {

@@ -120,11 +120,25 @@ class Grid {
                 let cell = CellNode(estado: 0)
                 cell.position.x = grid[x][y].position.x
                 cell.position.y = grid[x][y].position.y
+                if grid[x][y].position.z == 20 {
+                    cell.position.z = 0
+                } else {
+                    cell.position.z = grid[x][y].position.z + 1
+                }
+                let cellOld = grid[x][y] as CellNode
+                cellOld.delete()
                 gridNova[x][y] = cell
             }else{
                 let cell = CellNode(estado: 1)
                 cell.position.x = grid[x][y].position.x
                 cell.position.y = grid[x][y].position.y
+                if grid[x][y].position.z == 20 {
+                    cell.position.z = 0
+                } else {
+                    cell.position.z = grid[x][y].position.z + 1
+                }
+                let cellOld = grid[x][y] as CellNode
+                cellOld.delete()
                 gridNova[x][y] = cell
             }
         } else {
@@ -132,11 +146,25 @@ class Grid {
                 let cell = CellNode(estado: 1)
                 cell.position.x = grid[x][y].position.x
                 cell.position.y = grid[x][y].position.y
+                if grid[x][y].position.z == 20 {
+                    cell.position.z = 0
+                } else {
+                    cell.position.z = grid[x][y].position.z + 1
+                }
+                let cellOld = grid[x][y] as CellNode
+                cellOld.delete()
                 gridNova[x][y] = cell
             }else{
                 let cell = CellNode(estado: 0)
                 cell.position.x = grid[x][y].position.x
                 cell.position.y = grid[x][y].position.y
+                if grid[x][y].position.z == 20 {
+                    cell.position.z = 0
+                } else {
+                    cell.position.z = grid[x][y].position.z + 1
+                }
+                let cellOld = grid[x][y] as CellNode
+                cellOld.delete()
                 gridNova[x][y] = cell
             }
         }

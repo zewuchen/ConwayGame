@@ -14,7 +14,7 @@ class CellNode: SCNNode {
     var estado: Int {
         willSet {
             if newValue == 1 {
-                self.geometry?.firstMaterial?.diffuse.contents = UIColor.red
+                self.geometry?.firstMaterial?.diffuse.contents = UIColor.cyan
             }
             else{
                 self.geometry?.firstMaterial?.diffuse.contents = UIColor.white
@@ -26,10 +26,10 @@ class CellNode: SCNNode {
         self.estado = estado
         super.init()
         
-        let geometry = SCNBox(width: 0.8, height: 0.8, length: 0.08, chamferRadius: 0.005)
+        let geometry = SCNBox(width: 0.8, height: 0.8, length: 0.5, chamferRadius: 0.005)
         
         if estado == 1 {
-            geometry.firstMaterial?.diffuse.contents = UIColor.red
+            geometry.firstMaterial?.diffuse.contents = UIColor.cyan
         } else {
             geometry.firstMaterial?.diffuse.contents = UIColor.white
         }
@@ -39,5 +39,11 @@ class CellNode: SCNNode {
     required init?(coder aDecoder: NSCoder) {
         self.estado = 0
         super.init(coder: aDecoder)
+    }
+    
+    func delete() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            self.removeFromParentNode()
+        }
     }
 }
