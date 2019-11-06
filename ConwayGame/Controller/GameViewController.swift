@@ -11,37 +11,15 @@ import QuartzCore
 import SceneKit
 
 class GameViewController: UIViewController {
-    
+
     let scene = GameScene()
+    var play = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setPlayButton()
         setupScene()
     }
-    
-    func setPlayButton() {
-        let geometry = SCNPyramid(width: 3, height: 3, length: 0.08)
-        let playButton = SCNNode(geometry: geometry)
-        playButton.name = "play"
-        playButton.position.x = 1
-        playButton.position.y = -8
-        playButton.rotation = SCNVector4Make(0, 0, -1, Float(Double.pi/2));
-        playButton.geometry?.firstMaterial?.diffuse.contents = UIColor.systemBlue
-        scene.rootNode.addChildNode(playButton)
-    }
-    
-//    func setClearButton() {
-//        let geometry = SCNCylinder(radius: 1, height: 1)
-//        let clearButton = SCNNode(geometry: geometry)
-//        clearButton.name = "clear"
-//        clearButton.position.x = 6
-//        clearButton.position.y = -8
-//        clearButton.rotation = SCNVector4Make(0, 0, -1, Float(Double.pi/2));
-//        clearButton.geometry?.firstMaterial?.diffuse.contents = UIColor.yellow
-//        scene.rootNode.addChildNode(clearButton)
-//    }
     
     func setupScene() {
         let scnView = self.view as! SCNView
@@ -89,8 +67,14 @@ class GameViewController: UIViewController {
             }
             
             if result.node.name == "play" {
-                scene.rmNodes()
-                scene.nextGen()
+                if play {
+                    play = false
+                    scene.setGeometryPlayButton()
+                } else {
+                    play = true
+                    start()
+                    scene.setGeometryPlayButton()
+                }
             } else {
                 // Verifica o clique do estado e seta vivo ou morto
                 let node = result.node as! CellNode
@@ -103,6 +87,15 @@ class GameViewController: UIViewController {
             }
             
             SCNTransaction.commit()
+        }
+    }
+    
+    func start() {
+        if play {
+            scene.nextGen()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.start()
+            }
         }
     }
     

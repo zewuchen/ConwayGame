@@ -12,8 +12,8 @@ import SceneKit
 class CellNode: SCNNode {
     
     var estado: Int {
-        didSet {
-            if self.estado == 1 {
+        willSet {
+            if newValue == 1 {
                 self.geometry?.firstMaterial?.diffuse.contents = UIColor.red
             }
             else{
