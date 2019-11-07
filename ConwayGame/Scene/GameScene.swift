@@ -21,6 +21,7 @@ class GameScene: SCNScene {
     var controlPlayGeometry: Bool = true
     var first = 0
     var alternate: Bool = true
+    var clearSceneProtocol: clearScene?
     
     override init() {
         super.init()
@@ -31,6 +32,7 @@ class GameScene: SCNScene {
         centerCamera(basedOn: centerCell)
         
         setPlayButton()
+        setClearButton()
     }
         
     required init?(coder aDecoder: NSCoder) {
@@ -92,6 +94,14 @@ class GameScene: SCNScene {
             }
         }
     }
+
+    func reset() {
+        clearSceneProtocol?.clear()
+        self.grid = Grid(tamanho: 15).nextGen()
+        gridModel.grid = self.grid
+        first = 0
+        addNodes()
+    }
     
     func setPlayButton() {
         let geometry = SCNPyramid(width: 3, height: 3, length: 0.08)
@@ -121,15 +131,15 @@ class GameScene: SCNScene {
         
     }
     
-//    func setClearButton() {
-//        let geometry = SCNCylinder(radius: 1, height: 1)
-//        let clearButton = SCNNode(geometry: geometry)
-//        clearButton.name = "clear"
-//        clearButton.position.x = 6
-//        clearButton.position.y = -8
-//        clearButton.rotation = SCNVector4Make(0, 0, -1, Float(Double.pi/2));
-//        clearButton.geometry?.firstMaterial?.diffuse.contents = UIColor.yellow
-//        self.rootNode.addChildNode(clearButton)
-//    }
+    func setClearButton() {
+        let geometry = SCNCylinder(radius: 1, height: 1)
+        let clearButton = SCNNode(geometry: geometry)
+        clearButton.name = "clear"
+        clearButton.position.x = 7
+        clearButton.position.y = -8
+        clearButton.rotation = SCNVector4Make(0, 0, -1, Float(Double.pi/2));
+        clearButton.geometry?.firstMaterial?.diffuse.contents = UIColor.systemOrange
+        self.rootNode.addChildNode(clearButton)
+    }
 
 }

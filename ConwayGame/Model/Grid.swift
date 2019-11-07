@@ -33,7 +33,7 @@ class Grid {
         
     }
     
-    func nextGen() -> [[CellNode]]{
+    func nextGen() -> [[CellNode]] {
         for i in 0...grid.count - 1 {
             for j in 0...grid[0].count - 1 {
                 applyRules(x: i, y: j)

@@ -10,6 +10,10 @@ import UIKit
 import QuartzCore
 import SceneKit
 
+protocol clearScene {
+    func clear()
+}
+
 class GameViewController: UIViewController {
 
     let scene = GameScene()
@@ -17,8 +21,9 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupScene()
+
+        scene.clearSceneProtocol = self
     }
     
     func setupScene() {
@@ -30,15 +35,25 @@ class GameViewController: UIViewController {
         scnView.showsStatistics = true
         
         scnView.backgroundColor = UIColor.black
-        
+
+        setLight()
+
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        scnView.addGestureRecognizer(tapGesture)
+    }
+
+    func setLight() {
         let lightNode = SCNNode()
         lightNode.light = SCNLight()
         lightNode.light!.type = .omni
         lightNode.position = SCNVector3(x: 100, y: -20, z: 100)
         scene.rootNode.addChildNode(lightNode)
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        scnView.addGestureRecognizer(tapGesture)
+
+        let ambientNode = SCNNode()
+        ambientNode.light = SCNLight()
+        ambientNode.light!.type = .ambient
+        ambientNode.light!.color = UIColor.darkGray
+        scene.rootNode.addChildNode(ambientNode)
     }
     
     @objc
@@ -68,13 +83,15 @@ class GameViewController: UIViewController {
             
             if result.node.name == "play" {
                 if play {
-                    play = false
+                    self.play = false
                     scene.setGeometryPlayButton()
                 } else {
                     play = true
                     start()
                     scene.setGeometryPlayButton()
                 }
+            } else if result.node.name == "clear" {
+                scene.reset()
             } else {
                 // Verifica o clique do estado e seta vivo ou morto
                 let node = result.node as! CellNode
@@ -93,7 +110,7 @@ class GameViewController: UIViewController {
     func start() {
         if play {
             scene.nextGen()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.start()
             }
         }
@@ -115,4 +132,23 @@ class GameViewController: UIViewController {
         }
     }
 
+}
+
+extension GameViewController: clearScene {
+    func clear() {
+
+        if play == true {
+            scene.setGeometryPlayButton()
+        }
+
+        self.play = false
+
+        scene.rootNode.enumerateChildNodes { (node, stop) in
+            if !(node.name == "play" || node.name == "clear") {
+                node.removeFromParentNode()
+            }
+        }
+
+        setLight()
+    }
 }
